@@ -1,0 +1,133 @@
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://use.fontawesome.com/1be2411c64.js"></script>
+
+    <style>
+        .title {
+            font-size:120px;
+            text-align: center;
+            padding-top: 60px;
+            font-family: Arial, sans-serif;
+            -user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .temp{
+            font-size:120px;
+            text-align: center;
+            padding-top: 30px;
+            font-family: Arial, sans-serif;
+            -user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            font-weight: bold;
+        }
+        .condition{
+            font-size:160px;
+            text-align: center;
+            padding-top: 30px;
+            font-family: Arial, sans-serif;
+            -user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
+
+    <script>
+
+    function logResults(json){
+        console.log(json);
+    }
+
+    function getWeather(callback){
+        // url = 
+        // $.getJSON('http://openweathermap.org/data/2.1/find/city?lat=13.3428&lon=-6.2661&cnt=10&callback=?', function(data) { console.log(data); });
+        weatherurl = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&APPID=0428101a12d5d66dfd727735333086a0"
+      $.ajax({
+          dataType: "jsonp",
+          url: weatherurl,
+          success: callback
+        });
+    }
+
+    $(document).ready(function() {
+        metric = "F"
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                lat = position.coords.latitude;
+                lon = position.coords.longitude;
+                getWeather(function(json){
+                    console.log(json);
+                    temperature = json.main.temp * (9/5) - 459.67;
+                    $('.temp').text(Math.round(temperature) + "°" + " F");
+                    switch(json.weather[0].main){
+                        case "Rain":
+                            $('.condition').html("<i class='fa fa-shower' aria-hidden='true'></i>");
+                            break;
+                        case "Thunderstorm":
+                             $('.condition').html("<i class='fa fa-bolt' aria-hidden='true'></i>");
+                             break;
+                        case "Drizzle":
+                             $('.condition').html("<i class='fa fa-shower' aria-hidden='true'></i>");
+                             break;
+                        case "Snow":
+                            $('.condition').html("<i class='fa fa-snowflake-o' aria-hidden='true'></i>");
+                            break;
+                        case "Atmosphere":
+                            $('.condition').html("<i class='fa fa-cube' aria-hidden='true'></i>");
+                            break;
+                        case "Clear":
+                            $('.condition').html("<i class='fa fa-sun-o' aria-hidden='true'></i>");
+                            break;
+                        case "Clouds":
+                            $('.condition').html("<i class='fa fa-cloud' aria-hidden='true'></i>");
+                            break;
+                        case "Extreme":
+                            $('.condition').html("<i class='fa fa-exclamation-triangle' aria-hidden='true'></i>");
+                            break;
+                        default:
+                            $('.condition').html("<i class='fa fa-cube' aria-hidden='true'></i>");
+                            break;
+                    }
+                    $('.temp').on('click', function(){
+                        if (metric == "F") {
+                            temperature = (temperature -32) * (5/9);
+                            $('.temp').text(Math.round(temperature) + "°" + "C");
+                            metric = "C";
+                        } else if (metric == "C") {
+                            temperature = (temperature * (9/5)) + 32;
+                            $('.temp').text(Math.round(temperature) + "°" + "F");
+                            metric = "F";
+                        }
+                    });
+                });
+            });
+        }
+    });
+
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="title"><b>The Weather</b></div>
+        </div>
+        <div class="row">
+            <div class="temp">
+            </div>
+        </div>
+         <div class="row">
+            <div class="place">
+            </div>
+        </div>
+        <div class="row">
+            <div class="condition">
+            </div>
+        </div>
+    </div>
+</body>
